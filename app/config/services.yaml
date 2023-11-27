@@ -1,0 +1,60 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    # Ajoutez ici vos paramètres si nécessaire
+
+services:
+    # Configuration par défaut pour les services dans *ce* fichier
+    _defaults:
+        autowire: true # Injecte automatiquement les dépendances dans vos services.
+        autoconfigure: true # Enregistre automatiquement vos services en tant que commandes, écouteurs d'événements, etc.
+
+    # Rend les classes dans src/ disponibles pour être utilisées en tant que services
+    # Cela crée un service par classe dont l'ID est le nom de classe entièrement qualifié
+    # App\:
+    #     resource: '../src/'
+    #     exclude:
+    #         - '../src/DependencyInjection/'
+    #         - '../src/Entity/'
+    #         - '../src/Kernel.php'
+
+    Domain\:
+        resource: "../src/Domain"
+        exclude:
+            - "../src/Entity/"
+            - "../src/Domain/*/Entity"
+
+    Infrastructure\:
+        resource: "../src/Infrastructure"
+        exclude:
+            - "../Infrastructure/Symfony/Kernel.php"
+
+    Infrastructure\Symfony\Controller\:
+        resource: "../src/Infrastructure/Symfony/Controller/"
+        tags: ["controller.service_arguments"]
+
+    Application\Auth\RegisterUser\:
+        resource: "../src/Application/Auth/RegisterUser"
+        exclude:
+            - "../src/Application/Auth/RegisterUser/Entity/"
+
+    # Configuration spécifique pour le HelloController
+    Infrastructure\Symfony\Controller\HelloController:
+        class: 'Infrastructure\Symfony\Controller\HelloController'
+        arguments:
+            $input: '@Application\Auth\RegisterUser\RegisterUserCommandHandler'
+            $output: '@Infrastructure\Symfony\Adapter\Presenters\CreateUserHttpPresenter'
+
+    # Configuration spécifique pour le CreateUserHttpPresenter
+    Infrastructure\Symfony\Adapter\Presenters\CreateUserHttpPresenter:
+        class: 'Infrastructure\Symfony\Adapter\Presenters\CreateUserHttpPresenter'
+        arguments:
+            $renderEngine: '@Twig\Environment'
+
+    Infrastructure\Symfony\Command\CreateUserCommand:
+        arguments:
+            $input: '@Application\Auth\RegisterUser\RegisterUserCommandHandler'
+            $outputCli: '@Infrastructure\Symfony\Adapter\Presenters\CreateUserCliPresenter'

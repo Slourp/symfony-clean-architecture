@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: ${PROJECT_NAME}_PHP
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+        USER: ${USER:-myuser}
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+    networks:
+      - default
+      - project-network
+    env_file:
+      - .env
+
+  nginx:
+    container_name: ${PROJECT_NAME}_WEB
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d/sites-enabled
+    networks:
+      - default
+      - project-network
+    env_file:
+      - .env
+
+  db:
+    container_name: ${PROJECT_NAME}_MYSQL
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-password}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-password}
+      MYSQL_USER: ${MYSQL_USER:-user}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-main}
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - default
+      - project-network
+    env_file:
+      - .env
+
+networks:
+  default:
+    name: ${NETWORK_NAME}
+    external: true
+  project-network:
+    name: ${PROJECT_NAME}-NETWORK
+    internal: true
+volumes:
+  db-data:
+    name: ${DB_VOLUME:-db-data}
