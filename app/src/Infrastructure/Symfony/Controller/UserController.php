@@ -2,23 +2,23 @@
 
 namespace Infrastructure\Symfony\Controller;
 
-use Application\Auth\RegisterUser\CreateUserOutputPort;
 use Application\Auth\RegisterUser\RegisterUserCommand;
 use Application\Auth\RegisterUser\RegisterUserInput;
+use Infrastructure\Symfony\Adapter\Presenters\CreateUserJsonPresenter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class HelloController extends AbstractController
+class UserController extends AbstractController
 {
     public function __construct(
-        protected RegisterUserInput $input,
-        protected CreateUserOutputPort $output,
+        private RegisterUserInput $input,
+        private CreateUserJsonPresenter $output,
     ) {
     }
 
-    #[Route('/hello', name: 'app_hello')]
-    public function index(): Response
+    #[Route('/api/register', name: 'api_register', methods: ['GET'])]
+    public function registerUser(): Response
     {
         $command = new RegisterUserCommand(
             username: 'username',
@@ -26,10 +26,9 @@ class HelloController extends AbstractController
             password: "password123AAa12*"
         );
 
-        /**
-         * @var \Infrastructure\Symfony\Adapter\View\TwigViewModel
-         */
-        $view = $this->output->userCreated($this->input->registerUser($command));
+        $response = $this->input->registerUser($command);
+
+        $view = $this->output->present($response);
 
         return $view->getResponse();
     }

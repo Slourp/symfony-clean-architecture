@@ -9,6 +9,7 @@ use Infrastructure\Symfony\Adapter\View\CliViewModel;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'createrun',
@@ -37,6 +38,8 @@ class CreateUserCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
+
         $command = new RegisterUser(
             username: 'username',
             email: $this->generateRandomEmail(10),
@@ -50,7 +53,7 @@ class CreateUserCommand extends Command
          */
         $viewModel = $this->outputCli->present($response);
 
-        return $viewModel->getResponse();
+        return $viewModel->getResponse($io);
     }
 
     private function generateRandomEmail($length = 10): string
