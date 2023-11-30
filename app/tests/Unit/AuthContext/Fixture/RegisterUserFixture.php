@@ -28,11 +28,9 @@ class RegisterUserFixture
         }
     }
 
-    public function thenErrorShouldBeInstanceOf(string $expectedError): void
+    public function thenErrorShouldBe(string $expectedError): void
     {
-        if ($this->error !== null) {
-            expect(get_class($this->error))->toBe($expectedError);
-        }
+        expect(get_class($this->error))->toBe($expectedError);
     }
 
     public function thenUserShouldBeRegistered(string $username): void
