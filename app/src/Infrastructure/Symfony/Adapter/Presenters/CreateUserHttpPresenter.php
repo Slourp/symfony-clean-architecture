@@ -37,7 +37,7 @@ class CreateUserHttpPresenter implements CreateUserOutputPort
     public function userAlreadyExists(RegisterUserCommandResponse $response): TwigViewModel
     {
         return new TwigViewModel(
-            $this->twig,
+            $this->renderEngine,
             'user/create.html.twig',
             [
                 'user' => $response,
@@ -49,7 +49,7 @@ class CreateUserHttpPresenter implements CreateUserOutputPort
     public function unableToCreateUser(RegisterUserCommandResponse $response): TwigViewModel
     {
         return new TwigViewModel(
-            $this->twig,
+            $this->renderEngine,
             'user/error.html.twig',
             [
                 'user' => $response,

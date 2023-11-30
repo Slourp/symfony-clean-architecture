@@ -25,7 +25,7 @@ class CreateUserJsonPresenter implements CreateUserOutputPort
             Response::HTTP_CREATED,
             [
                 'status' => 'success',
-                'user' => $response->user->getEmail()->value
+                'data' => $response->user->getEmail()->value
             ]
         );
     }

@@ -9,12 +9,18 @@ use Domain\AuthContext\ValueObject\UserName;
 class User
 {
     public function __construct(
-        private    UserName $userName,
+        private UserName $userName,
         private Email $email,
-        private Password $password
+        private Password $password,
+        public readonly ?string $id = null,
+
     ) {
     }
 
+    public function getId(): string
+    {
+        return $this->id;
+    }
     public function getUserName(): UserName
     {
         return $this->userName;
