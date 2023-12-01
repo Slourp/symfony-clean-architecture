@@ -6,6 +6,9 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Domain\AuthContext\Entity\User as EntityUser;
 use Domain\AuthContext\Gateway\UserRepositoryWriteI;
+use Domain\AuthContext\ValueObject\Email;
+use Domain\AuthContext\ValueObject\Password;
+use Domain\AuthContext\ValueObject\UserName;
 use Infrastructure\Symfony\Entity\User;
 
 /**
@@ -22,13 +25,11 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryWr
     {
         parent::__construct($registry, User::class);
     }
-
     public function getAllUsers()
     {
         $users = $this->registry->findAll();
         return $users;
     }
-
     public function registerUser(EntityUser $user): string
     {
         $user =  (new User())
@@ -40,5 +41,41 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryWr
         $this->getEntityManager()->flush();
 
         return $user->getId();
+    }
+
+    public function findByUsername(string $username): ?EntityUser
+    {
+        /**
+         * @var User
+         */
+        $userEntity = $this->findOneBy(['username' => $username]);
+
+        if ($userEntity === null) {
+            return null;
+        }
+
+        return new EntityUser(
+            UserName::of($userEntity->getUsername()),
+            Email::of($userEntity->getEmail()),
+            Password::of($userEntity->getPassword()),
+            $userEntity->getId()
+        );
+    }
+
+    public function findByEmail(string $email): ?EntityUser
+    {
+        /**
+         * @var User
+         */
+        $userEntity = $this->findOneBy(['email' => $email]);
+
+        if ($userEntity === null) return null;
+
+        return new EntityUser(
+            UserName::of($userEntity->getUsername()),
+            Email::of($userEntity->getEmail()),
+            Password::of($userEntity->getPassword()),
+            $userEntity->getId()
+        );
     }
 }

@@ -11,7 +11,7 @@ class User
     public function __construct(
         private UserName $userName,
         private Email $email,
-        private Password $password,
+        private ?Password $password = null,
         public readonly ?string $id = null,
 
     ) {
@@ -33,7 +33,7 @@ class User
 
     public function getPassword(): Password
     {
-        return $this->password;
+        return $this?->password;
     }
 
     public function updatePassword(Password $newPassword): void

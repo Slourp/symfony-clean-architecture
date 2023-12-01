@@ -24,4 +24,10 @@ class InMemoryUserRepository implements UserRepositoryWriteI
 
         return $users ? reset($users) : null;
     }
+    public function findByEmail(string $email): ?User
+    {
+        $users = array_filter($this->users, fn (User $user) => $user->getEmail()->value === $email);
+
+        return $users ? reset($users) : null;
+    }
 }
