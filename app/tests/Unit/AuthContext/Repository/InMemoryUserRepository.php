@@ -4,6 +4,7 @@ namespace Tests\Unit\AuthContext\Repository;
 
 use Domain\AuthContext\Entity\User;
 use Domain\AuthContext\Gateway\UserRepositoryWriteI;
+use Domain\AuthContext\ValueObject\Email;
 
 class InMemoryUserRepository implements UserRepositoryWriteI
 {
@@ -16,6 +17,16 @@ class InMemoryUserRepository implements UserRepositoryWriteI
     {
         $this->users[] = $user;
         return $user?->id;
+    }
+
+    public function emailExists(Email $email): bool
+    {
+        foreach ($this->users as $user) {
+            if ($user->getEmail()->value === $email) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function findByUsername(string $username): ?User

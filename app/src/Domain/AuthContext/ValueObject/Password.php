@@ -20,7 +20,7 @@ class Password
             throw new InvalidPasswordException(
                 "Password must contain at least 8 characters, including uppercase, lowercase letters and special characters."
             );
-        return new self(password_hash($value, PASSWORD_BCRYPT));
+        return new self($value);
     }
 
     public function __toString(): string

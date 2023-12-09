@@ -1,4 +1,4 @@
-<?
+<?php
 
 namespace Infrastructure\Symfony\Adapter\Presenters;
 
@@ -14,7 +14,7 @@ class CreateUserCliPresenter implements CreateUserOutputPort
     {
         return match ($response->status) {
             "USER_CREATED" => $this->userCreated($response),
-            "USER_EXISTS" => $this->userAlreadyExists($response),
+            "USER_ALREADY_EXISTS" => $this->userAlreadyExists($response),
             "UNABLE_TO_CREATE_USER" => $this->unableToCreateUser($response),
             default => throw new \InvalidArgumentException("Invalid status"),
         };
@@ -31,7 +31,7 @@ class CreateUserCliPresenter implements CreateUserOutputPort
     public function userAlreadyExists(RegisterUserCommandResponse $response): CliViewModel
     {
         return new CliViewModel(function (SymfonyStyle $io) use ($response): int {
-            $io->error("User {$response->user->getEmail()->value} already exists!");
+            $io->error($response->message); // Message explains that the user already exists
             return Command::FAILURE;
         });
     }
@@ -39,7 +39,7 @@ class CreateUserCliPresenter implements CreateUserOutputPort
     public function unableToCreateUser(RegisterUserCommandResponse $response): CliViewModel
     {
         return new CliViewModel(function (SymfonyStyle $io) use ($response): int {
-            $io->error("Error occurred while creating user: {$response->message}");
+            $io->warning("\nError occurred while creating user: {$response->message}");
             return Command::FAILURE;
         });
     }

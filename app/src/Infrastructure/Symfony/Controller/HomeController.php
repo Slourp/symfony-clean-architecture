@@ -13,8 +13,6 @@ class HomeController extends AbstractController
     public function index(Security $security): Response
     {
         $user = $security->getUser();
-
-        // Dump the user using dd()
         dd($user);
         return $this->render('home/index.html.twig', [
             'controller_name' => 'HomeController',

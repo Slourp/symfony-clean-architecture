@@ -9,9 +9,9 @@ use Domain\AuthContext\ValueObject\UserName;
 class User
 {
     public function __construct(
-        private UserName $userName,
-        private Email $email,
-        private Password $password,
+        private UserName        $userName,
+        private Email           $email,
+        private ?Password $password = null,
         public readonly ?string $id = null,
 
     ) {

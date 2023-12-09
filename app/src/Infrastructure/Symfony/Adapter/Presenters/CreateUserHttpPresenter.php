@@ -17,7 +17,7 @@ class CreateUserHttpPresenter implements CreateUserOutputPort
     {
         return match ($response->status) {
             "USER_CREATED" => $this->userCreated($response),
-            "USER_EXISTS" => $this->userAlreadyExists($response),
+            "USER_ALREADY_EXISTS" => $this->userAlreadyExists($response),
             "UNABLE_TO_CREATE_USER" => $this->unableToCreateUser($response),
             default => throw new \InvalidArgumentException("Invalid status"),
         };
@@ -38,9 +38,9 @@ class CreateUserHttpPresenter implements CreateUserOutputPort
     {
         return new TwigViewModel(
             $this->renderEngine,
-            'user/create.html.twig',
+            'user/show.html.twig',
             [
-                'user' => $response,
+                'user' => $response->message,
                 'error' => $response->message
             ]
         );

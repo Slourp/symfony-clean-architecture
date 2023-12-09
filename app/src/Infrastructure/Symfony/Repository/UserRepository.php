@@ -6,7 +6,11 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Domain\AuthContext\Entity\User as EntityUser;
 use Domain\AuthContext\Gateway\UserRepositoryWriteI;
+use Domain\AuthContext\ValueObject\Email;
+use Domain\AuthContext\ValueObject\UserName;
 use Infrastructure\Symfony\Entity\User;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -18,8 +22,10 @@ use Infrastructure\Symfony\Entity\User;
  */
 class UserRepository extends ServiceEntityRepository implements UserRepositoryWriteI
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private  UserPasswordHasherInterface $passwordEncoder
+    ) {
         parent::__construct($registry, User::class);
     }
 
@@ -29,16 +35,48 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryWr
         return $users;
     }
 
+    public function findByUsername(string $username): ?EntityUser
+    {
+        $userDoctrine = $this->findOneBy(['username' => $username]);
+
+        if (!$userDoctrine) {
+            return null;
+        }
+
+        return new EntityUser(
+            userName: UserName::of($userDoctrine->getUsername()),
+            email: Email::of($userDoctrine->getEmail()),
+            password: null,
+            id: $userDoctrine->getId()
+        );
+    }
+
     public function registerUser(EntityUser $user): string
     {
-        $user =  (new User())
-            ->setUsername($user->getUserName()->value)
+        $userDoctrine = new User();
+        $userDoctrine->setUsername($user->getUserName()->value)
             ->setEmail($user->getEmail()->value)
-            ->setPassword($user->getPassword()->value);
+            ->setPassword(
+                $this->passwordEncoder->hashPassword(
+                    $userDoctrine,
+                    $user->getPassword()->value
+                )
+            );
 
-        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->persist($userDoctrine);
         $this->getEntityManager()->flush();
 
-        return $user->getId();
+        return $userDoctrine->getId();
+    }
+
+    public function emailExists(Email $email): bool
+    {
+        $test = $this->createQueryBuilder('u')
+            ->select('count(u.id)')
+            ->where('u.email = :email')
+            ->setParameter('email', $email->value)
+            ->getQuery()
+            ->getSingleScalarResult() > 0;
+        return $test;
     }
 }

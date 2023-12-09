@@ -22,14 +22,13 @@ class HelloController extends AbstractController
     {
         $command = new RegisterUserCommand(
             username: 'username',
-            email: $this->generateRandomEmail(),
+            email: '123@test.com',
             password: "password123AAa12*"
         );
-
         /**
          * @var \Infrastructure\Symfony\Adapter\View\TwigViewModel
          */
-        $view = $this->output->userCreated($this->input->registerUser($command));
+        $view = $this->output->present($this->input->registerUser($command));
 
         return $view->getResponse();
     }

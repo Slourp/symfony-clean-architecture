@@ -2,12 +2,13 @@
 
 namespace Infrastructure\Symfony\Entity;
 
-use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\UuidV7 as Uuid;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Infrastructure\Symfony\Repository\UserRepository;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -17,13 +18,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[Groups(['group1', 'group2'])]
-    private ?int $id = null;
+    private ?Uuid $id = null;
 
-    #[ORM\Column(length: 100, nullable: true)] // Make the column nullable
-    #[Groups(['group3'])] // Only include in group3
+    #[ORM\Column(length: 100, nullable: true)]
+    #[Groups(['group3'])]
     private ?string $username = null;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
@@ -37,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['group1'])]
     private ?string $password = null;
 
-    public function getId(): ?int
+    public function getId(): ?Uuid
     {
         return $this->id;
     }
