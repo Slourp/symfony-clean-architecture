@@ -21,11 +21,10 @@ class InMemoryUserRepository implements UserRepositoryWriteI
 
     public function emailExists(Email $email): bool
     {
-        foreach ($this->users as $user) {
-            if ($user->getEmail()->value === $email) {
+        foreach ($this->users as $user)
+            if ($user->getEmail()->value === $email)
                 return true;
-            }
-        }
+
         return false;
     }
 
