@@ -6,9 +6,7 @@ use Domain\AuthContext\Exceptions\InvalidPasswordException;
 use Domain\AuthContext\Exceptions\InvalidUserNameException;
 use Tests\Unit\AuthContext\Fixture\RegisterUserFixture;
 
-beforeEach(function () {
-    $this->fixture = new RegisterUserFixture();
-});
+beforeEach(fn () => $this->fixture = new RegisterUserFixture());
 
 describe("Feature: Registering a new user", function () {
 

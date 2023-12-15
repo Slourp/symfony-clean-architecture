@@ -9,6 +9,9 @@ use Tests\Unit\AuthContext\Repository\InMemoryUserRepository;
 
 class RegisterUserFixture
 {
+    /**
+     * @var RegisterUserCommandHandler
+     */
     private RegisterUserInput $registerUser;
     private InMemoryUserRepository $repository;
     private ?\Throwable $error = null;
@@ -23,6 +26,7 @@ class RegisterUserFixture
     {
         try {
             $this->registerUser->registerUser($command);
+            $this->error = $this->registerUser->error;
         } catch (\Throwable $e) {
             $this->error = $e;
         }
