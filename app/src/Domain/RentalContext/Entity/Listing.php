@@ -80,9 +80,9 @@ class Listing
     public static function fromArray(array $data): self
     {
         return new self(
-            title: new Title($data['title']),
+            title: Title::of($data['title']),
             description: new Description($data['description']),
-            price: new Price($data['price']),
+            price: Price::of($data['price']),
             location: $data['location'],
             id: isset($data['id']) && !is_null($data['id']) ? $data['id'] : null,
         );

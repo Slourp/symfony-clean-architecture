@@ -35,6 +35,7 @@ class InMemoryListingRepository implements ListingRepositoryI
 
     public function findById(string $uuid): ?Listing
     {
-        return $this->listings[$uuid] ?? Listing::fromArray($this->listings[$uuid]);
+        if (!isset($this->listings[$uuid])) return null;
+        return  Listing::fromArray($this->listings[$uuid]);
     }
 }

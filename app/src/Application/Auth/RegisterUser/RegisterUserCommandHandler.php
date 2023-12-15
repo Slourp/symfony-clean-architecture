@@ -32,8 +32,9 @@ class RegisterUserCommandHandler implements RegisterUserInput
                 userName: UserName::of($command->username),
                 email: Email::of($command->email),
                 password: Password::of($command->password),
-                id: $command?->id
+                id: $command->id
             );
+
             $this->userRepositoryWrite->registerUser(user: $user);
 
             return new RegisterUserCommandResponse(self::STATUS_USER_CREATED, 'User is successfully created', $user);
