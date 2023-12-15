@@ -11,6 +11,7 @@ use Domain\AuthContext\ValueObject\UserName;
 
 class RegisterUserCommandHandler implements RegisterUserInput
 {
+    public  ?\Exception $error  = null;
     private const STATUS_USER_ALREADY_EXISTS = 'USER_ALREADY_EXISTS';
     private const STATUS_USER_CREATED = 'USER_CREATED';
     private const STATUS_UNABLE_TO_CREATE_USER = 'UNABLE_TO_CREATE_USER';
@@ -37,6 +38,7 @@ class RegisterUserCommandHandler implements RegisterUserInput
 
             return new RegisterUserCommandResponse(self::STATUS_USER_CREATED, 'User is successfully created', $user);
         } catch (\Exception $e) {
+            $this->error = $e;
             return new RegisterUserCommandResponse(self::STATUS_UNABLE_TO_CREATE_USER, $e->getMessage(), null);
         }
     }

@@ -2,8 +2,6 @@
 
 namespace Domain\RentalContext\Entity;
 
-use Application\RentalContext\Exceptions\TitleInvalidArgumentException;
-use Application\RentalContext\Exceptions\TitleMissingException;
 use Domain\RentalContext\ValueObject\Description;
 use Domain\RentalContext\ValueObject\Price;
 use Domain\RentalContext\ValueObject\Title;
@@ -11,9 +9,6 @@ use InvalidArgumentException;
 
 class Listing
 {
-
-
-
     public function __construct(
         private Title $title,
         private Description $description,
@@ -29,14 +24,7 @@ class Listing
 
     public function setTitle(Title $title): void
     {
-        if (empty($title->value)) {
-            throw new TitleInvalidArgumentException('Title can not be empty');
-        }
-        if (strlen($title->value) < 5) {
-            throw new TitleInvalidArgumentException('Title must be at least 5 characters long.');
-        }
-
-        $this->title = $title;
+        $this->title = $title::of($title->value);
     }
 
     public function setDescription(Description $description): void
@@ -50,11 +38,7 @@ class Listing
 
     public function setPrice(Price $price): void
     {
-        if ($price->value < 0) {
-            throw new InvalidArgumentException('Price should be positive.');
-        }
-
-        $this->price = $price;
+        $this->price = $price::of($price->value);
     }
     public function setLocation(string $location): void
     {

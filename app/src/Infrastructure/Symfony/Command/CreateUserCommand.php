@@ -11,10 +11,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(
-    name: 'createrun',
-    description: 'Creates a new user.'
-)]
 class CreateUserCommand extends Command
 {
     /**
@@ -30,8 +26,7 @@ class CreateUserCommand extends Command
 
     protected function configure(): void
     {
-        $this->setName('create:run') // Set command name here
-
+        $this->setName('create:run')
             ->setDescription('Creates a new user.')
             ->setHelp('This command allows you to create a user...');
     }
@@ -40,13 +35,17 @@ class CreateUserCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $command = new RegisterUser(
-            username: 'username',
-            email: $this->generateRandomEmail(10),
-            password: "password123AAa12*"
+        $username = $io->ask('Enter your username');
+        $email = $io->ask('Enter your email');
+        $password = $io->askHidden('Enter your password');
+
+        $registerUser = new RegisterUser(
+            username: $username,
+            email: $email,
+            password: $password
         );
 
-        $response = $this->input->registerUser($command);
+        $response = $this->input->registerUser($registerUser);
 
         /**
          * @var CliViewModel
@@ -54,15 +53,5 @@ class CreateUserCommand extends Command
         $viewModel = $this->outputCli->present($response);
 
         return $viewModel->getResponse($io);
-    }
-
-    private function generateRandomEmail($length = 10): string
-    {
-        $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        $emailAddress = '';
-        for ($i = 0; $i < $length; $i++) {
-            $emailAddress .= $characters[rand(0, strlen($characters) - 1)];
-        }
-        return $emailAddress . '@example.com';
     }
 }

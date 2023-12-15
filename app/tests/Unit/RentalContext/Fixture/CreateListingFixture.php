@@ -28,6 +28,7 @@ class CreateListingFixture
 
     public function thenErrorShouldBe(string $expectedError): void
     {
+
         expect(get_class($this->error))->toBe($expectedError);
     }
 

@@ -1,41 +1,46 @@
-<?
+<?php
 
-namespace Tests\Unit\RentalContext\Fixture;
+namespace Tests\Unit\AuthContext\Fixture;
 
-use Application\RentalContext\UseCase\CreateListing\CreateListingCommand;
-use Application\RentalContext\UseCase\CreateListing\CreateListingCommandHandler;
-use Tests\Unit\RentalContext\Repository\InMemoryListingRepository;
+use Application\Auth\RegisterUser\RegisterUserCommand;
+use Application\Auth\RegisterUser\RegisterUserCommandHandler;
+use Application\Auth\RegisterUser\RegisterUserInput;
+use Tests\Unit\AuthContext\Repository\InMemoryUserRepository;
 
-class CreateListingFixture
+class RegisterUserFixture
 {
+    /**
+     * @var RegisterUserCommandHandler
+     */
+    private RegisterUserInput $registerUser;
+    private InMemoryUserRepository $repository;
     private ?\Throwable $error = null;
-    public function __construct(
-        private CreateListingCommandHandler $createListing,
-        private InMemoryListingRepository $repository
-    ) {
-        $this->repository = new InMemoryListingRepository();
-        $this->createListing = new CreateListingCommandHandler($this->repository);
+
+    public function __construct()
+    {
+        $this->repository = new InMemoryUserRepository();
+
+        $this->registerUser = new RegisterUserCommandHandler($this->repository);
     }
 
-    public function whenListingIsCreated(CreateListingCommand $command): void
+    public function whenUserRegisters(RegisterUserCommand $command): void
     {
         try {
-            $this->createListing->createListing($command);
+            $this->registerUser->registerUser($command);
+            $this->error = $this->registerUser->error;
         } catch (\Throwable $e) {
             $this->error = $e;
         }
     }
 
-    public function thenListingShouldBeCreatedWithDetails(string $title, string $description): void
+    public function thenErrorShouldBe(string $expectedError): void
     {
-        $listing = $this->repository->findByTitleAndDescription($title, $description);
-        expect($listing)->notToBeNull();
-        expect($listing->getTitle()->value)->toBe($title, "The created listing's title does not match the expected value");
-        expect($listing->getDescription()->value)->toBe($description, "The created listing's description does not match the expected value");
+        expect(get_class($this->error))->toBe($expectedError);
     }
 
-    public function thenErrorShouldBeOfType(string $expectedErrorType): void
+    public function thenUserShouldBeRegistered(string $username): void
     {
-        expect($this->error)->toBeInstanceOf($expectedErrorType);
+        $user = $this->repository->findByUsername($username);
+        expect($user->getUserName()->value)->toBe($username, "The registered user's username does not match the expected value");
     }
 }
