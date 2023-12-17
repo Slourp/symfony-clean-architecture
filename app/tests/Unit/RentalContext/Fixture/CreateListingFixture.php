@@ -21,6 +21,7 @@ class CreateListingFixture
     {
         try {
             $this->createListing->createListing($command);
+            $this->error = $this->createListing->error;
         } catch (\Throwable $th) {
             $this->error = $th;
         }

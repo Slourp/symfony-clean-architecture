@@ -5,6 +5,7 @@ namespace Tests\Unit\AuthContext\Repository;
 use Domain\AuthContext\Entity\User;
 use Domain\AuthContext\Gateway\UserRepositoryWriteI;
 use Domain\AuthContext\ValueObject\Email;
+use Domain\RentalContext\ValueObject\UserId;
 
 class InMemoryUserRepository implements UserRepositoryWriteI
 {
@@ -13,7 +14,7 @@ class InMemoryUserRepository implements UserRepositoryWriteI
      */
     private array $users = [];
 
-    public function registerUser(User $user): string
+    public function registerUser(User $user): UserId
     {
         $this->users[] = $user;
         return $user?->id;

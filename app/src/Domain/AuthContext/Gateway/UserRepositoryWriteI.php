@@ -4,6 +4,7 @@ namespace Domain\AuthContext\Gateway;
 
 use Domain\AuthContext\Entity\User;
 use Domain\AuthContext\ValueObject\Email;
+use Domain\RentalContext\ValueObject\UserId;
 
 interface UserRepositoryWriteI
 {
@@ -11,9 +12,9 @@ interface UserRepositoryWriteI
      * Registers a user and returns their ID.
      *
      * @param User $user The user to register.
-     * @return string The ID of the registered user.
+     * @return UserId The ID of the registered user.
      */
-    public function registerUser(User $user): string;
+    public function registerUser(User $user): UserId;
 
     /**
      * Checks if an email is already in use.

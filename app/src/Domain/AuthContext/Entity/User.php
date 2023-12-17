@@ -5,6 +5,7 @@ namespace Domain\AuthContext\Entity;
 use Domain\AuthContext\ValueObject\Email;
 use Domain\AuthContext\ValueObject\Password;
 use Domain\AuthContext\ValueObject\UserName;
+use Domain\RentalContext\ValueObject\UserId;
 
 class User
 {
@@ -12,12 +13,12 @@ class User
         private UserName        $userName,
         private Email           $email,
         private ?Password $password = null,
-        public readonly ?string $id = null,
+        public readonly ?UserId $id = null,
 
     ) {
     }
 
-    public function getId(): string
+    public function getId(): UserId
     {
         return $this->id;
     }

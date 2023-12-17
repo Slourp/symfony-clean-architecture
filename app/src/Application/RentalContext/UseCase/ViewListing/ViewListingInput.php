@@ -6,5 +6,5 @@ use Application\RentalContext\UseCase\ViewListing\ViewListingCommand;
 
 interface ViewListingInput
 {
-    public function viewListing(ViewListingCommand $command);
+    public function viewListing(ViewListingCommand $command): ViewListingResponse;
 }

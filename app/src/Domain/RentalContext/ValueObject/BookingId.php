@@ -1,22 +1,26 @@
 <?php
 
-namespace Domain\RentalContext\ValueObject;
+namespace Domain\AuthContext\ValueObject;
 
 use Ramsey\Uuid\Uuid;
 
-class ListingId
+class BookingId
 {
-    private function __construct(public readonly ?string $value = null)
+    public readonly string $value;
+
+    private function __construct(string $value)
     {
+        $this->value = $value;
     }
+
     public static function of(string $value): self
     {
-        if (is_null($value)) return new static($value);
-
-        if (!Uuid::isValid($value))
+        if (!Uuid::isValid($value)) {
             throw new \InvalidArgumentException(
                 sprintf('Provided value is not a valid UUID: %s', $value)
             );
+        }
+
         return new static($value);
     }
 }

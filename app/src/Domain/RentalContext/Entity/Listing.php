@@ -3,6 +3,7 @@
 namespace Domain\RentalContext\Entity;
 
 use Domain\RentalContext\ValueObject\Description;
+use Domain\RentalContext\ValueObject\ListingId;
 use Domain\RentalContext\ValueObject\Price;
 use Domain\RentalContext\ValueObject\Title;
 use InvalidArgumentException;
@@ -14,7 +15,7 @@ class Listing
         private Description $description,
         private Price $price,
         private string $location,
-        public  readonly ?string  $id = null
+        public  readonly ?ListingId  $id = null
     ) {
         $this->setTitle($title);
         $this->setDescription($description);
@@ -70,7 +71,7 @@ class Listing
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
+            'id' => $this->id ? $this->id->value : null,
             'title' => $this->title->value,
             'description' => $this->description->value,
             'price' => $this->price->value,
@@ -84,7 +85,9 @@ class Listing
             description: new Description($data['description']),
             price: Price::of($data['price']),
             location: $data['location'],
-            id: isset($data['id']) && !is_null($data['id']) ? $data['id'] : null,
+            id: isset($data['id']) && !empty($data['id'])
+                ? ListingId::of($data['id'])
+                : null
         );
     }
 }

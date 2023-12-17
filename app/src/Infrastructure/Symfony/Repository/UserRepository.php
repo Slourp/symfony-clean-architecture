@@ -8,6 +8,7 @@ use Domain\AuthContext\Entity\User as EntityUser;
 use Domain\AuthContext\Gateway\UserRepositoryWriteI;
 use Domain\AuthContext\ValueObject\Email;
 use Domain\AuthContext\ValueObject\UserName;
+use Domain\RentalContext\ValueObject\UserId;
 use Infrastructure\Symfony\Entity\User;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -51,7 +52,7 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryWr
         );
     }
 
-    public function registerUser(EntityUser $user): string
+    public function registerUser(EntityUser $user): UserId
     {
         $userDoctrine = new User();
         $userDoctrine->setUsername($user->getUserName()->value)
@@ -66,7 +67,7 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryWr
         $this->getEntityManager()->persist($userDoctrine);
         $this->getEntityManager()->flush();
 
-        return $userDoctrine->getId();
+        return UserId::of($userDoctrine->getId());
     }
 
     public function emailExists(Email $email): bool
