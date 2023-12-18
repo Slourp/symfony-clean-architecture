@@ -24,7 +24,6 @@ services:
     Domain\:
         resource: "../src/Domain"
         exclude:
-            - "../src/Entity/"
             - "../src/Domain/*/Entity"
 
     Infrastructure\:

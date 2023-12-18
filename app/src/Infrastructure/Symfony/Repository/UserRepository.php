@@ -30,7 +30,7 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryWr
         parent::__construct($registry, User::class);
     }
 
-    public function getAllUsers()
+    public function getAllUsers(): array
     {
         $users = $this->registry->findAll();
         return $users;
