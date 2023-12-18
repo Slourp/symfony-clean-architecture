@@ -21,6 +21,6 @@ class UserId
             );
         }
 
-        return new static($value);
+        return new self($value);
     }
 }

@@ -12,9 +12,9 @@ class Price
     ) {
     }
 
-    public static function of(?float $value): self
+    public static function of(float $value): self
     {
-        if ($value === null || $value <= 0) {
+        if ($value <= 0) {
             throw new InvalidPriceException();
         }
 

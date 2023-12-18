@@ -68,6 +68,10 @@ class Listing
     {
         return $this->location;
     }
+
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -78,6 +82,11 @@ class Listing
             'location' => $this->location,
         ];
     }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return self
+     */
     public static function fromArray(array $data): self
     {
         return new self(

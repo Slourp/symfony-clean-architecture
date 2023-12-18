@@ -13,9 +13,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CreateUserCommand extends Command
 {
-    /**
-     * @param \Infrastructure\Symfony\Adapter\Presenters\CreateUserCliPresenter @output
-     */
     public function __construct(
         private RegisterUserInput $input,
         private CreateUserOutputPort $outputCli,

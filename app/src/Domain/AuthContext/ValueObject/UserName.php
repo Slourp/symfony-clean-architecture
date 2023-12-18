@@ -13,9 +13,12 @@ class UserName
 
     public static function of(?string $value): self
     {
-        if (strlen($value) < 4) throw new InvalidUserNameException(
-            "User name cannot be less than 4 characters."
-        );
+        // Handle null value explicitly
+        if ($value === null || (string) strlen($value) < 4) {
+            throw new InvalidUserNameException(
+                "User name cannot be null or less than 4 characters."
+            );
+        }
 
         return new self($value);
     }

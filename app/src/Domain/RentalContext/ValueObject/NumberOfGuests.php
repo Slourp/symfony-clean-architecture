@@ -13,6 +13,6 @@ class NumberOfGuests
     {
         if ($value < 1 || $value > 15) throw new \InvalidArgumentException('Number of guests must be between 1 and 15.');
 
-        return new static($value);
+        return new self($value);
     }
 }

@@ -25,7 +25,7 @@ class CreateListingCommandHandler implements CreateListingInput
             $listing = new Listing(
                 title: new Title($command->title),
                 description: new Description($command->description),
-                price: new Price($command->price),
+                price: new Price((float) $command->price),
                 location: $command->location
             );
 

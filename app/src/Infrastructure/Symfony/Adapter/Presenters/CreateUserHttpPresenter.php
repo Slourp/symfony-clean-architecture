@@ -25,6 +25,10 @@ class CreateUserHttpPresenter implements CreateUserOutputPort
 
     public function userCreated(RegisterUserCommandResponse $response): TwigViewModel
     {
+        if ($response->user === null)
+            throw new \InvalidArgumentException("User is null");
+
+
         return new TwigViewModel(
             $this->renderEngine,
             'user/show.html.twig',
@@ -33,6 +37,7 @@ class CreateUserHttpPresenter implements CreateUserOutputPort
             ]
         );
     }
+
 
     public function userAlreadyExists(RegisterUserCommandResponse $response): TwigViewModel
     {

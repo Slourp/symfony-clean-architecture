@@ -18,7 +18,7 @@ class User
     ) {
     }
 
-    public function getId(): UserId
+    public function getId(): ?UserId
     {
         return $this->id;
     }
@@ -32,7 +32,7 @@ class User
         return $this->email;
     }
 
-    public function getPassword(): Password
+    public function getPassword(): ?Password
     {
         return $this->password;
     }

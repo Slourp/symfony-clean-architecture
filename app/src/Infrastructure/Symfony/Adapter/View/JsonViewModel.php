@@ -1,4 +1,4 @@
-<?php
+<?
 
 namespace Infrastructure\Symfony\Adapter\View;
 
@@ -7,6 +7,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class JsonViewModel extends ViewModel
 {
+    /**
+     * @param array<string, mixed> $data
+     */
     public function __construct(
         private int $statusCode,
         private array $data

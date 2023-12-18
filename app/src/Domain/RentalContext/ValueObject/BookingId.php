@@ -21,6 +21,6 @@ class BookingId
             );
         }
 
-        return new static($value);
+        return new self($value);
     }
 }

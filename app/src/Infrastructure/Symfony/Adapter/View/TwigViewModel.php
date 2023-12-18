@@ -8,6 +8,9 @@ use Twig\Environment;
 
 class TwigViewModel extends ViewModel
 {
+    /**
+     * @param array<string, mixed> $data
+     */
     public function __construct(
         private Environment $twig,
         private string $template,

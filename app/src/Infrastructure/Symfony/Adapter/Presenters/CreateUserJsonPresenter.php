@@ -21,6 +21,9 @@ class CreateUserJsonPresenter implements CreateUserOutputPort
 
     public function userCreated(RegisterUserCommandResponse $response): JsonViewModel
     {
+        if ($response->user === null)
+            throw new \RuntimeException("User is null in the response for a user created scenario.");
+
         return new JsonViewModel(
             Response::HTTP_CREATED,
             [

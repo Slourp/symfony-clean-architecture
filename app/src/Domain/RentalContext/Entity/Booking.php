@@ -40,6 +40,16 @@ class Booking
         $this->status = BookingStatus::PENDING;
     }
 
+    public function getUserId(): UserId
+    {
+        return $this->userId;
+    }
+
+    public function getListingId(): ListingId
+    {
+        return $this->listingId;
+    }
+
     /**
      * Sets the booking dates and checks for availability and conflicts.
      * @param BookingDates $dates
@@ -93,6 +103,11 @@ class Booking
         }
 
         $this->numberOfGuests = NumberOfGuests::of($numberOfGuests->value);
+    }
+
+    public function getNumberOfGuest(): NumberOfGuests
+    {
+        return $this->numberOfGuests;
     }
 
     /**

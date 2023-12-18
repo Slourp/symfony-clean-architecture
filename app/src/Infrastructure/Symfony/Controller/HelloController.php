@@ -32,15 +32,4 @@ class HelloController extends AbstractController
 
         return $view->getResponse();
     }
-
-    private function generateRandomEmail($length = 10)
-    {
-        $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        $emailAddress = '';
-        for ($i = 0; $i < $length; $i++) {
-            $emailAddress .= $characters[rand(0, strlen($characters) - 1)];
-        }
-
-        return $emailAddress . '@example.com';
-    }
 }

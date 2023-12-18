@@ -22,11 +22,19 @@ class CreateUserCliPresenter implements CreateUserOutputPort
 
     public function userCreated(RegisterUserCommandResponse $response): CliViewModel
     {
-        return new CliViewModel(function (SymfonyStyle $io) use ($response): int {
-            $io->success("User {$response->user->getEmail()->value} {$response->user->getUserName()->value} successfully created.");
-            return Command::SUCCESS;
-        });
+        return new CliViewModel(
+            function (SymfonyStyle $io) use ($response): int {
+                if ($response->user == null) {
+                    $io->error("No user information available.");
+                    return Command::FAILURE;
+                }
+
+                $io->success("User {$response->user->getEmail()->value} {$response->user->getUserName()->value} successfully created.");
+                return Command::SUCCESS;
+            }
+        );
     }
+
 
     public function userAlreadyExists(RegisterUserCommandResponse $response): CliViewModel
     {
