@@ -4,7 +4,7 @@ namespace Infrastructure\Symfony\Command;
 
 use Application\Auth\RegisterUser\RegisterUserCommand;
 use Application\Auth\RegisterUser\RegisterUserCommandHandler;
-use Application\RentalContext\UseCase\CreateListing\CreateListingCommand;
+use Application\HousingManagement\UseCase\CreateListing\CreateListingCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

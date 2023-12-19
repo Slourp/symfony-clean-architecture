@@ -77,7 +77,7 @@
             "@auto-scripts"
         ],
         "test": "./vendor/bin/pest",
-        "stan": "vendor/bin/phpstan analyse src"
+        "stan": "vendor/bin/phpstan analyse src --level=8"
     },
     "conflict": {
         "symfony/symfony": "*"

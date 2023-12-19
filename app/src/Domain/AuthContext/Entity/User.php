@@ -5,7 +5,7 @@ namespace Domain\AuthContext\Entity;
 use Domain\AuthContext\ValueObject\Email;
 use Domain\AuthContext\ValueObject\Password;
 use Domain\AuthContext\ValueObject\UserName;
-use Domain\RentalContext\ValueObject\UserId;
+use Domain\HousingManagement\ValueObject\UserId;
 
 class User
 {

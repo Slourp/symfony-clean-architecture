@@ -4,7 +4,7 @@ namespace Domain\AuthContext\Gateway;
 
 use Domain\AuthContext\Entity\User;
 use Domain\AuthContext\ValueObject\Email;
-use Domain\RentalContext\ValueObject\UserId;
+use Domain\HousingManagement\ValueObject\UserId;
 
 interface UserRepositoryWriteI
 {

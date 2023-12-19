@@ -5,7 +5,7 @@ namespace Tests\Unit\AuthContext\Repository;
 use Domain\AuthContext\Entity\User;
 use Domain\AuthContext\Gateway\UserRepositoryWriteI;
 use Domain\AuthContext\ValueObject\Email;
-use Domain\RentalContext\ValueObject\UserId;
+use Domain\HousingManagement\ValueObject\UserId;
 
 class InMemoryUserRepository implements UserRepositoryWriteI
 {
