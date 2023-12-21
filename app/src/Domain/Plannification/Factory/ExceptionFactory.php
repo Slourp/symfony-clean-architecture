@@ -2,72 +2,24 @@
 
 namespace Domain\Plannification\Factory;
 
-use Domain\Plannification\Exceptions\InvalidOwnerException;
-use Domain\Plannification\Exceptions\InvalidTenantException;
-use Domain\Plannification\Exceptions\InvalidCapacityException;
-use Domain\Plannification\Exceptions\CapacityExceededException;
-use Domain\Plannification\Exceptions\DateNotAvailableException;
-use Domain\Plannification\Exceptions\InvalidDateRangeException;
-use Domain\Plannification\Exceptions\OverlappingBookingException;
-use Domain\Plannification\Exceptions\BookingCancellationException;
-use Domain\Plannification\Exceptions\BookingModificationException;
-use Domain\Plannification\Exceptions\InvalidBookingStateException;
-use Domain\Plannification\Exceptions\UnauthorizedModificationException;
+use Domain\Plannification\Exceptions\DateRelatedException;
+use Domain\Plannification\Exceptions\BookingStateException;
+use Domain\Plannification\Exceptions\ResourceValidationException;
 
 class ExceptionFactory
 {
-    public static function createDateNotAvailableException(): DateNotAvailableException
+    public static function createDateRelatedException(string $message = 'Date-related error'): DateRelatedException
     {
-        throw new DateNotAvailableException();
+        throw new DateRelatedException($message);
     }
 
-    public static function createBookingModificationException(): BookingModificationException
+    public static function createBookingStateException(string $message = 'Booking state error'): BookingStateException
     {
-        throw new BookingModificationException();
+        throw new BookingStateException($message);
     }
 
-    public static function createCapacityExceededException(): CapacityExceededException
+    public static function createResourceValidationException(string $message = 'Resource validation error'): ResourceValidationException
     {
-        throw new CapacityExceededException();
-    }
-
-    public static function createInvalidBookingStateException(): InvalidBookingStateException
-    {
-        throw new InvalidBookingStateException();
-    }
-
-    public static function createOverlappingBookingException(): OverlappingBookingException
-    {
-        throw new OverlappingBookingException();
-    }
-
-    public static function createUnauthorizedModificationException(): UnauthorizedModificationException
-    {
-        throw new UnauthorizedModificationException();
-    }
-
-    public static function createInvalidTenantException(): InvalidTenantException
-    {
-        throw new InvalidTenantException();
-    }
-
-    public static function createInvalidOwnerException(): InvalidOwnerException
-    {
-        throw new InvalidOwnerException();
-    }
-
-    public static function createBookingCancellationException(): BookingCancellationException
-    {
-        throw new BookingCancellationException();
-    }
-
-    public static function createInvalidCapacityException(): InvalidCapacityException
-    {
-        throw new InvalidCapacityException();
-    }
-
-    public static function createInvalidDateRangeException(): InvalidDateRangeException
-    {
-        throw new InvalidDateRangeException();
+        throw new ResourceValidationException($message);
     }
 }
