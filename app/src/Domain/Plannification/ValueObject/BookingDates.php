@@ -4,6 +4,7 @@ namespace Domain\Plannification\ValueObject;
 
 use DateTimeImmutable;
 use InvalidArgumentException;
+use Domain\Plannification\Factory\ExceptionFactory;
 
 class BookingDates
 {
@@ -18,9 +19,7 @@ class BookingDates
      */
     public static function of(DateTimeImmutable $startDate, DateTimeImmutable $endDate): self
     {
-        if ($startDate >= $endDate) {
-            throw new InvalidArgumentException('Start date cannot be later than end date.');
-        }
+        if ($startDate >= $endDate) ExceptionFactory::createInvalidDateRangeException();
 
         return new self($startDate, $endDate);
     }

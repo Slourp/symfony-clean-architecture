@@ -2,17 +2,17 @@
 
 namespace Infrastructure\Symfony\Command;
 
-use Application\Auth\RegisterUser\RegisterUserCommand;
-use Application\Auth\RegisterUser\RegisterUserCommandHandler;
-use Application\HousingManagement\UseCase\CreateListing\CreateListingCommand;
-use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use Application\Auth\RegisterUser\RegisterUserCommand;
+use Application\Auth\RegisterUser\RegisterUserCommandHandler;
 use Tests\Unit\AuthContext\Repository\InMemoryUserRepository;
+use Application\HousingManagement\UseCase\CreateListing\CreateListingCommand;
 
 #[AsCommand(
     name: 'BookingCommand',
@@ -52,7 +52,8 @@ class BookingCommand extends Command
             title: 'Cozy Apartment',
             description: 'A nice and cozy apartment in downtown',
             price: 150.00,
-            location: '123 Main St, Downtown'
+            location: '123 Main St, Downtown',
+            capacity: 5
         );
         $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
 

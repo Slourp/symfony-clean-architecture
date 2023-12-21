@@ -1,18 +1,17 @@
 <?php
 
-namespace Domain\HousingManagement\Entity;
+namespace Domain\Plannification\Entity;
 
-use Domain\HousingManagement\ValueObject\Capacity;
-use Domain\HousingManagement\ValueObject\ListingId;
-use Domain\HousingManagement\ValueObject\NumberOfGuests;
-use Domain\HousingManagement\ValueObject\UserId;
-use Domain\Plannification\ValueObject\BookingDates;
-use Domain\Plannification\ValueObject\BookingId;
-use Domain\Plannification\ValueObject\BookingStatus;
-use Domain\Plannification\ValueObject\OwnerId;
-use Domain\Plannification\ValueObject\TenantId;
+use DateTimeImmutable;
 use InvalidArgumentException;
-
+use Domain\Plannification\ValueObject\OwnerId;
+use Domain\Plannification\ValueObject\Capacity;
+use Domain\Plannification\ValueObject\TenantId;
+use Domain\Plannification\ValueObject\BookingId;
+use Domain\Plannification\ValueObject\ListingId;
+use Domain\Plannification\ValueObject\BookingDates;
+use Domain\Plannification\ValueObject\BookingStatus;
+use Domain\Plannification\ValueObject\NumberOfGuests;
 
 class Booking
 {
@@ -25,6 +24,7 @@ class Booking
      * @param BookingDates $dates
      * @param NumberOfGuests $numberOfGuests
      * @param Capacity $maxCapacity
+     * @param DateTimeImmutable $now
      * @param Booking[] $existingBookings
      */
     public function __construct(
@@ -35,14 +35,21 @@ class Booking
         private Capacity $maxCapacity,
         private TenantId $tenantId,
         private OwnerId $ownerId,
+        private DateTimeImmutable $now,
+        private readonly int $updateThresholdDays = 3,
         private array $existingBookings = []
     ) {
-
         $this->setDates($dates);
         $this->setNumberOfGuests($numberOfGuests);
         $this->setCapacity($this->maxCapacity->getValue());
         $this->status = BookingStatus::PENDING;
     }
+
+    public function getbookingId(): BookingId
+    {
+        return $this->id;
+    }
+
     public function getTenantId(): TenantId
     {
         return $this->tenantId;
@@ -73,7 +80,8 @@ class Booking
     /**
      * Sets the booking dates and checks for availability and conflicts.
      * @param BookingDates $dates
-     * @throws InvalidArgumentException if the dates are not available or conflict with existing bookings.
+     * @throws InvalidArgumentException if the dates are not available, conflict with existing bookings,
+     * or are within 3 days of the current date.
      */
     private function setDates(BookingDates $dates): void
     {
@@ -81,11 +89,24 @@ class Booking
             throw new InvalidArgumentException('The requested dates are not available.');
         }
 
+        if ($this->isTooLateToUpdateDates()) {
+            throw new InvalidArgumentException('Cannot modify booking within 3 days of start date.');
+        }
+
         $this->dates = $dates;
     }
 
+    /**
+     * Sets the capacity for the booking and checks if it's within the allowable time frame.
+     * @param int $capacity
+     * @throws InvalidArgumentException if trying to set capacity within 3 days of the start date.
+     */
     public function setCapacity(int $capacity): void
     {
+        if ($this->isTooLateToUpdateDates()) {
+            throw new InvalidArgumentException('Cannot change capacity within 3 days of start date.');
+        }
+
         $this->maxCapacity = Capacity::of($capacity);
     }
 
@@ -101,7 +122,6 @@ class Booking
 
     /**
      * Check for overlap between two booking dates.
-     *
      * @param Booking[] $existingBookings
      * @param BookingDates $newDates
      * @return bool true if dates overlaps, false otherwise.
@@ -150,10 +170,15 @@ class Booking
 
     /**
      * Cancels the booking if it's currently confirmed.
-     * @throws InvalidArgumentException if the booking is not in a confirmed state.
+     * @throws InvalidArgumentException if the booking is not in a confirmed state
+     * or if it's within 3 days of the start date.
      */
     public function cancelBooking(): void
     {
+        if ($this->isTooLateToUpdateDates()) {
+            throw new InvalidArgumentException('Cannot cancel booking within 3 days of start date.');
+        }
+
         if ($this->status !== BookingStatus::CONFIRMED) {
             throw new InvalidArgumentException('Only confirmed bookings can be cancelled.');
         }
@@ -173,7 +198,21 @@ class Booking
             throw new InvalidArgumentException('Only confirmed bookings can be modified.');
         }
 
+        if ($this->isTooLateToUpdateDates()) {
+            throw new InvalidArgumentException('Cannot modify booking within 3 days of start date.');
+        }
+
         $this->setDates($newDates);
         $this->setNumberOfGuests(NumberOfGuests::of($newNumberOfGuests));
+    }
+
+    /**
+     * Checks if it's too late to update booking dates.
+     * @return bool true if it's within 3 days of start date, false otherwise.
+     */
+    public function isTooLateToUpdateDates(): bool
+    {
+        $dateDiff = $this->now->diff($this->dates->startDate)->days;
+        return $dateDiff <= $this->updateThresholdDays;
     }
 }
