@@ -42,6 +42,8 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-password}
       MYSQL_USER: ${MYSQL_USER:-user}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-main}
+    ports:
+      - "3306:3306"
     volumes:
       - db-data:/var/lib/mysql
     networks:
@@ -59,4 +61,4 @@ networks:
     internal: true
 volumes:
   db-data:
-    name: ${PROJECT_NAME}-db-data
+    name: ${PROJECT_NAME}-db-data1

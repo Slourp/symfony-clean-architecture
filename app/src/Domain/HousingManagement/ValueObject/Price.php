@@ -4,7 +4,6 @@ namespace Domain\HousingManagement\ValueObject;
 
 use Domain\HousingManagement\Exceptions\InvalidPriceException;
 
-
 class Price
 {
     public function __construct(
@@ -14,9 +13,7 @@ class Price
 
     public static function of(float $value): self
     {
-        if ($value <= 0) {
-            throw new InvalidPriceException();
-        }
+        if ($value <= 0) throw new InvalidPriceException();
 
         return new self($value);
     }
