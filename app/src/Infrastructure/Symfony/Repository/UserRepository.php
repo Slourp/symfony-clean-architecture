@@ -33,9 +33,6 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryWr
     /**
      * @return EntityUser[]
      */
-    /**
-     * @return EntityUser[]
-     */
     public function getAllUsers(): array
     {
         $doctrineUsers = $this->findAll();
@@ -83,7 +80,6 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryWr
             id: UserId::of($id)
         );
     }
-
     public function registerUser(EntityUser $user): UserId
     {
         $userDoctrine = new User();
@@ -102,15 +98,12 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryWr
 
         $this->getEntityManager()->persist($userDoctrine);
         $this->getEntityManager()->flush();
-
         $doctrineId = $userDoctrine->getId();
 
         if ($doctrineId === null) throw new \RuntimeException("Failed to retrieve the user ID after persisting.");
 
         return UserId::of($doctrineId->toRfc4122());
     }
-
-
     public function emailExists(Email $email): bool
     {
         return $this->createQueryBuilder('u')

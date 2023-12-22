@@ -8,6 +8,7 @@ use Domain\HousingManagement\ValueObject\Title;
 use Domain\HousingManagement\ValueObject\Capacity;
 use Domain\HousingManagement\ValueObject\Location;
 use Domain\HousingManagement\ValueObject\Description;
+use Domain\HousingManagement\ValueObject\ListingId;
 
 class ListingBuilder
 {
@@ -16,6 +17,13 @@ class ListingBuilder
     private string $price;
     private string $location;
     private string $capacity;
+    private ?string $id = null;
+
+    public function withId(?string $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
 
     public static function create(): self
     {
@@ -59,7 +67,8 @@ class ListingBuilder
             price: Price::of((float)$this->price),
             description: Description::of($this->location),
             title: Title::of($this->title),
-            location: Location::of($this->description)->value
+            location: Location::of($this->description)->value,
+            id: $this->id ? ListingId::of($this->id) : null
         );
     }
 }
