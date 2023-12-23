@@ -5,10 +5,8 @@ namespace Tests\Feature\User\Repository;
 use Faker\Factory as Faker;
 use Infrastructure\Symfony\Entity\User;
 use Domain\AuthContext\ValueObject\Email;
-use Symfony\Component\Console\Application;
 use Domain\AuthContext\ValueObject\Password;
 use Domain\AuthContext\ValueObject\UserName;
-use Symfony\Component\Console\Input\ArrayInput;
 use Domain\AuthContext\Entity\User as EntityUser;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 

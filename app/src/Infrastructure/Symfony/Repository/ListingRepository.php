@@ -32,10 +32,8 @@ class ListingRepository extends ServiceEntityRepository implements ListingReposi
             ->setPrice($listing->getPrice()->value)
             ->setLocation($listing->getLocation())
             ->setCapacity($listing->getCapacity()->getValue());
-        if ($listing->id !== null) $ormListing->setId($listing->id->value);
         $em = $this->getEntityManager();
         $em->persist($ormListing);
-        $ormListing->setId($listing->id->value);
         $em->flush();
         return true;
     }

@@ -2,13 +2,11 @@
 
 namespace Tests\Feature\HousingManagement\Repository;
 
-use Infrastructure\Symfony\Repository\ListingRepository;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Faker\Factory as Faker;
-use Domain\HousingManagement\Builder\ListingBuilder;
-use Domain\HousingManagement\Entity\Listing as EntityListing;
 use Infrastructure\Symfony\Entity\Listing;
-use Symfony\Component\Uid\UuidV4;
+use Domain\HousingManagement\Builder\ListingBuilder;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Domain\HousingManagement\Entity\Listing as EntityListing;
 
 uses(KernelTestCase::class);
 
@@ -37,7 +35,6 @@ it('saves a listing', function () {
     $result = $this->listingRepository->save($domainListing);
     /** @var EntityListing */
     $listingInDatabase = $this->listingRepository->findByTitleAndDescription($domainListing->getTitle()->value, $domainListing->getDescription()->value);
-
     expect($result)->toBeTrue();
     expect($listingInDatabase->getDescription()->value)->toEqual($domainListing->getDescription()->value);
 });
@@ -71,13 +68,20 @@ it('finds a listing by id', function () {
         ->withPrice($this->faker->randomFloat(2, 100, 1000))
         ->withLocation($this->faker->address())
         ->withCapacity($this->faker->randomDigitNotNull())
-        ->withId("018c939a-dab8-75ad-b545-2d90ec3c93cc")
         ->build();
     $this->listingRepository->save($domainListing);
 
     /**
      * @var EntityListing 
      */
-    $foundListing = $this->listingRepository->findById($domainListing->id->value);
-    expect($foundListing->id->value)->toBe($domainListing->id->value);
+    $foundListingByTitleandDescription = $this->listingRepository->findByTitleAndDescription(
+        $domainListing->getTitle()->value,
+        $domainListing->getDescription()->value
+    );
+
+    /**
+     * @var EntityListing 
+     */
+    $foundListing = $this->listingRepository->findById($foundListingByTitleandDescription->id->value);
+    expect($foundListing->id->value)->toBe($foundListingByTitleandDescription->id->value);
 });
