@@ -32,11 +32,9 @@ class ListingRepository extends ServiceEntityRepository implements ListingReposi
             ->setPrice($listing->getPrice()->value)
             ->setLocation($listing->getLocation())
             ->setCapacity($listing->getCapacity()->getValue());
-
         $em = $this->getEntityManager();
         $em->persist($ormListing);
         $em->flush();
-
         return true;
     }
     public function findByTitleAndDescription(string $title, string $description): ?DomainListing
@@ -45,7 +43,6 @@ class ListingRepository extends ServiceEntityRepository implements ListingReposi
          * @var Listing|null
          */
         $listing = $this->findOneBy(['title' => $title, 'description' => $description]);
-
         return ($listing !== null) ? DomainListing::fromArray($listing->toArray()) : null;
     }
     public function findById(string $uuid): ?DomainListing
@@ -56,29 +53,4 @@ class ListingRepository extends ServiceEntityRepository implements ListingReposi
         $listing = $this->findOneBy(['id' => $uuid]);
         return ($listing !== null) ? DomainListing::fromArray($listing->toArray()) : null;
     }
-
-    //    /**
-    //     * @return Listing[] Returns an array of Listing objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('l')
-    //            ->andWhere('l.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('l.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Listing
-    //    {
-    //        return $this->createQueryBuilder('l')
-    //            ->andWhere('l.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
 }

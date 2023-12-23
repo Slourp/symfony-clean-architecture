@@ -3,15 +3,19 @@
 namespace Infrastructure\Symfony\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\UuidV7 as Uuid;
 use Infrastructure\Symfony\Repository\ListingRepository;
+use Symfony\Component\Uid\UuidV7;
 
 #[ORM\Entity(repositoryClass: ListingRepository::class)]
 class Listing
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    private ?Uuid $id = null;
+
 
     #[ORM\Column(length: 155)]
     private ?string $title = null;
@@ -28,9 +32,17 @@ class Listing
     #[ORM\Column(type: 'integer')]
     private ?int $capacity = null;
 
-    public function getId(): ?int
+    public function getId(): ?Uuid
     {
         return $this->id;
+    }
+
+    public function setId(string $id): self
+    {
+        // Convert the string to UuidV7
+        $this->id = UuidV7::fromString($id);
+
+        return $this;
     }
 
     public function getTitle(): ?string

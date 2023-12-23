@@ -3,89 +3,85 @@
 namespace Tests\Feature\HousingManagement\Repository;
 
 use Faker\Factory as Faker;
-use Symfony\Component\Console\Input\ArrayInput;
+use Infrastructure\Symfony\Entity\Listing;
 use Domain\HousingManagement\Builder\ListingBuilder;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Infrastructure\Symfony\Repository\ListingRepository;
-use Domain\HousingManagement\Entity\Listing as DomainListing;
+use Domain\HousingManagement\Entity\Listing as EntityListing;
 
-uses(KernelTestCase::class)->in('Command');
+uses(KernelTestCase::class);
 
-beforeEach(function () {
-    self::bootKernel();
+beforeEach(function (): void {
 
-    // Reset the database
-    $this->runConsoleCommand('doctrine:database:drop --force --env=test');
-    $this->runConsoleCommand('doctrine:database:create --env=test');
-    $this->runConsoleCommand('doctrine:migrations:migrate --no-interaction --env=test');
-
-    // Initialize the repository and Faker
-    $this->repository = $this->getContainer()->get(ListingRepository::class);
+    $kernel = KernelTestCase::bootKernel();
+    $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+    $this->listingRepository = $this->entityManager->getRepository(Listing::class);
     $this->faker = Faker::create();
-    $this->builder = new ListingBuilder();
 });
 
-// Helper function to run console commands
-function runConsoleCommand(string $command): int
-{
-    $application = new Application($this->kernel);
-    $input = new ArrayInput(['command' => $command]);
-    $application->setAutoExit(false);
-    return $application->run($input);
-}
+afterEach(function (): void {
+    $this->entityManager->close();
+    $this->entityManager = null;
+});
 
-
-// Test pour la méthode save
-it('saves a new domain listing', function () {
-
-    $domainListing = $this->builder
-        ->withId($this->faker->uuid())
-        ->withOwnerId($this->faker->uuid())
-        ->withTenantId($this->faker->uuid())
-        ->withListingId($this->faker->uuid())
-        ->withDates(
-            $this->faker->date('Y-m-d'),
-            $this->faker->date('Y-m-d', '+1 week')
-        )
-        ->actualDate($this->faker->date('Y-m-d'))
-        ->withNumberOfGuests($this->faker->numberBetween(1, 5))
-        ->withMaxCapacity($this->faker->numberBetween(1, 10))
-        ->thresholdDays($this->faker->numberBetween(1, 30))
-        ->withExistingBookings([]) // Remplacez ceci par un tableau de réservations existantes si nécessaire
+it('saves a listing', function () {
+    $domainListing = ListingBuilder::create()
+        ->withTitle($this->faker->sentence(10))
+        ->withDescription($this->faker->sentence(20))
+        ->withPrice($this->faker->randomFloat(2, 100, 1000))
+        ->withLocation($this->faker->address())
+        ->withCapacity($this->faker->randomDigitNotNull())
         ->build();
 
-    $result = $this->repository->save($domainListing);
+    $result = $this->listingRepository->save($domainListing);
+    /** @var EntityListing */
+    $listingInDatabase = $this->listingRepository->findByTitleAndDescription($domainListing->getTitle()->value, $domainListing->getDescription()->value);
     expect($result)->toBeTrue();
-    // Vérifiez si les données sont correctement enregistrées dans la base de données
+    expect($listingInDatabase->getDescription()->value)->toEqual($domainListing->getDescription()->value);
 });
 
-// Test pour la méthode findByTitleAndDescription
 it('finds a listing by title and description', function () {
-    $title = $this->faker->sentence;
-    $description = $this->faker->text;
-    $domainListing = (new ListingBuilder())
-        ->withTitle($title)
-        ->withDescription($description)
-        // Ici, incluez toutes les autres méthodes du builder
-        ->build();
-    $this->repository->save($domainListing);
 
-    $foundListing = $this->repository->findByTitleAndDescription($title, $description);
-    expect($foundListing)->toBeInstanceOf(DomainListing::class);
-    // Vérifiez si les données correspondent
+    $domainListing = ListingBuilder::create()
+        ->withTitle($this->faker->sentence(10))
+        ->withDescription($this->faker->sentence(20))
+        ->withPrice($this->faker->randomFloat(2, 100, 1000))
+        ->withLocation($this->faker->address())
+        ->withCapacity($this->faker->randomDigitNotNull())
+        ->build();
+
+    $this->listingRepository->save($domainListing);
+
+    $foundListing = $this->listingRepository->findByTitleAndDescription(
+        $domainListing->getTitle()->value,
+        $domainListing->getDescription()->value
+    );
+    expect($foundListing)->not()->toBeNull();
+    expect($foundListing->getTitle()->value)->toBe($domainListing->getTitle()->value);
+    expect($foundListing->getDescription()->value)->toBe($domainListing->getDescription()->value);
 });
 
-// Test pour la méthode findById
 it('finds a listing by id', function () {
-    $id = $this->faker->uuid;
-    $domainListing = (new ListingBuilder())
-        ->withId($id)
-        // Ici, incluez toutes les autres méthodes du builder
-        ->build();
-    $this->repository->save($domainListing);
 
-    $foundListing = $this->repository->findById($id);
-    expect($foundListing)->toBeInstanceOf(DomainListing::class);
-    // Vérifiez si les données correspondent
+    $domainListing = ListingBuilder::create()
+        ->withTitle($this->faker->sentence(10))
+        ->withDescription($this->faker->sentence(20))
+        ->withPrice($this->faker->randomFloat(2, 100, 1000))
+        ->withLocation($this->faker->address())
+        ->withCapacity($this->faker->randomDigitNotNull())
+        ->build();
+    $this->listingRepository->save($domainListing);
+
+    /**
+     * @var EntityListing 
+     */
+    $foundListingByTitleandDescription = $this->listingRepository->findByTitleAndDescription(
+        $domainListing->getTitle()->value,
+        $domainListing->getDescription()->value
+    );
+
+    /**
+     * @var EntityListing 
+     */
+    $foundListing = $this->listingRepository->findById($foundListingByTitleandDescription->id->value);
+    expect($foundListing->id->value)->toBe($foundListingByTitleandDescription->id->value);
 });
