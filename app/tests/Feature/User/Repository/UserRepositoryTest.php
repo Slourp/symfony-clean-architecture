@@ -2,22 +2,25 @@
 
 namespace Tests\Feature\User\Repository;
 
-use Domain\AuthContext\Entity\User as EntityUser;
+use Faker\Factory as Faker;
+use Infrastructure\Symfony\Entity\User;
 use Domain\AuthContext\ValueObject\Email;
+use Symfony\Component\Console\Application;
 use Domain\AuthContext\ValueObject\Password;
 use Domain\AuthContext\ValueObject\UserName;
-use Infrastructure\Symfony\Entity\User;
+use Symfony\Component\Console\Input\ArrayInput;
+use Domain\AuthContext\Entity\User as EntityUser;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Faker\Factory as Faker;
 
 uses(KernelTestCase::class);
 
 beforeEach(function (): void {
+
     $kernel = KernelTestCase::bootKernel();
     $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+    $this->userRepository = $this->entityManager->getRepository(User::class);
     $this->faker = Faker::create();
 });
-
 
 afterEach(function (): void {
     $this->entityManager->close();

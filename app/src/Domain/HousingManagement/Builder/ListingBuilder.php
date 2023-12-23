@@ -18,10 +18,17 @@ class ListingBuilder
     private string $location;
     private string $capacity;
     private ?string $id = null;
+    private ?string $ownerId = null;
 
     public function withId(?string $id): self
     {
         $this->id = $id;
+        return $this;
+    }
+
+    public function withOwnerId(?string $ownerId): self
+    {
+        $this->ownerId = $ownerId;
         return $this;
     }
 
@@ -68,7 +75,7 @@ class ListingBuilder
             description: Description::of($this->location),
             title: Title::of($this->title),
             location: Location::of($this->description)->value,
-            id: $this->id ? ListingId::of($this->id) : null
+            id: $this->id !== null ? ListingId::of($this->id) : null
         );
     }
 }

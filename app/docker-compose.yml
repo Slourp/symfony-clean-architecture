@@ -51,6 +51,21 @@ services:
       - project-network
     env_file:
       - .env
+  db_test:
+    container_name: ${PROJECT_NAME}_MYSQL_TEST
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-password}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-password}
+      MYSQL_USER: ${MYSQL_USER:-user}
+      MYSQL_DATABASE: ${MYSQL_DATABASE_TEST:-test}_test
+    volumes:
+      - db-test-data:/var/lib/mysql
+    networks:
+      - default
+      - project-network
+    env_file:
+      - .env
 
 networks:
   default:
@@ -61,4 +76,6 @@ networks:
     internal: true
 volumes:
   db-data:
-    name: ${PROJECT_NAME}-db-data1
+    name: ${PROJECT_NAME}-db-data
+  db-test-data:
+    name: ${PROJECT_NAME}-db-test-data
